@@ -9,3 +9,9 @@ Planning to do a simple CLI daily volume analysis through query history state fr
 [ ] simple volume calculation
 [ ] complex volume calculation (involve more than two currency, by the time writing will be KAR->KSM->KUSD and KUSD->KSM->KAR)
 [ ] USD valued volume
+
+### Other Doc/Resource
+- [SubQuery](https://explorer.subquery.network/subquery/AcalaNetwork/karura)
+- [polkadot{.js}](https://polkadot.js.org/docs/api/start/)
+- [Subscan (Karura)](https://karura.subscan.io)
+- [Acala Foundation's Github](https://github.com/AcalaNetwork)

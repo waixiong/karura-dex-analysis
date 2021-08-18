@@ -34,6 +34,9 @@ There is two sample scripts:
 
 Here is the sample result
 ```
+npm run 7days
+```
+```
 927 trade made on Mon, 16 Aug 2021 00:00:00 GMT
 	601 trades in KAR-KSM
 		Volume(KSM): 4168.7530196286825
@@ -41,7 +44,12 @@ Here is the sample result
 	412 trades in KUSD-KSM
 		Volume(KSM): 3823.581465309773
 		Fees(KSM): 11.47074439592932 KSM
+```
 
+```
+npm run 24hours
+```
+```
 722 trade made on last 24 hours
 	541 trades in KAR-KSM
 		Volume(KSM): 4985.107738396779

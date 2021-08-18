@@ -17,7 +17,7 @@ export class Block {
     public static fromJson(args: { id: string, timestamp: string }) {
         let result: Block = new Block(
             args.id,
-            Date.parse(args.timestamp),
+            Date.parse(args.timestamp+'Z'),
         );
         return result;
     }
@@ -26,6 +26,7 @@ export class Block {
 // TODO: use gentype from acala
 export class SwapEvent {
     id: string;
+    blockNumber: number;
     block: Block;
     // data
     currency: string[];
@@ -36,6 +37,9 @@ export class SwapEvent {
         let result: SwapEvent = new SwapEvent();
         if (obj.hasOwnProperty('id')) {
             result.id = obj['id'];
+        }
+        if (obj.hasOwnProperty('blockNumber')) {
+            result.blockNumber = obj['blockNumber'];
         }
         if (obj.hasOwnProperty('block')) {
             result.block = Block.fromJson(obj['block'] as { id: string, timestamp: string });

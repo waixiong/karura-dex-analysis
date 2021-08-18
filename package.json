@@ -4,7 +4,9 @@
   "description": "karura decentralized exchange analysis",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "ts-node ./src/index.ts"
+    "start": "ts-node ./src/index.ts",
+    "7days": "ts-node ./scripts/7days.ts",
+    "24hours": "ts-node ./scripts/24hours.ts"
   },
   "keywords": [
     "karura",

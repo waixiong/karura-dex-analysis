@@ -19,6 +19,7 @@ The data may have 1% ± mistake due to not exact history rate of pair, we define
 - [ ] rough complex swap volume (KSM) calculation (involve more than two currency, by the time writing will be KAR->KSM->KUSD and KUSD->KSM->KAR)
 - [ ] USD valued volume
 - [x] Query liquidity on specific block
+- [x] History rate base on liquidity pool
 - [ ] Calculate liquidity fee return on pool (% value, apr)
 - [ ] price of token (calculated from liquidity pool with KSM as base)
 - [ ] volume changed

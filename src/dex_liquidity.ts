@@ -3,6 +3,7 @@ import { AnyNumber } from '@polkadot/types/types';
 import BN from 'bn.js';
 import * as fetch from "node-fetch";
 import { SwapEvent } from './swap';
+import { subquery } from './utils';
 
 /// default as KAR KSM
 export async function historyRateFromLiquidity(
@@ -56,7 +57,7 @@ export async function historyKSMPrice(blockNumber: AnyNumber, karuraApi: ApiProm
 // TODO: use gentype from acala
 export async function querySwap(count: number, offset: number = 0) : Promise<SwapEvent[]> {
     // var a = await fetch.default("https://api.subquery.network/sq/AcalaNetwork/karura", {
-    var a = await fetch.default("https://api.polkawallet.io/karura-subql", {
+    var query = {
         "headers": {
             "Content-Type": "application/json",
         },
@@ -85,7 +86,38 @@ export async function querySwap(count: number, offset: number = 0) : Promise<Swa
             "variables":null
         }`,
         "method": "POST",
-    });
+    };
+    // var a = await fetch.default("https://api.polkawallet.io/karura-subql", {
+    //     "headers": {
+    //         "Content-Type": "application/json",
+    //     },
+    //     "body": `{
+    //         "query":"query {\
+    //             events (\
+    //                 first: ${count}\
+    //                 offset: ${offset}\
+    //                 orderBy: BLOCK_NUMBER_DESC\
+    //                 filter: {\
+    //                     method: { equalTo: \\\"Swap\\\" }\
+    //                 }\
+    //             ) {\
+    //                 nodes {\
+    //                     id\
+    //                     method\
+    //                     data\
+    //                     blockNumber\
+    //                     block {\
+    //                         id\
+    //                         timestamp\
+    //                     }\
+    //                 }\
+    //             }\
+    //         }",
+    //         "variables":null
+    //     }`,
+    //     "method": "POST",
+    // });
+    var a = await subquery(query);
     var buf = await a.buffer();
     var objs: Object[] = JSON.parse(buf.toString('utf8'))['data']['events']['nodes'];
 

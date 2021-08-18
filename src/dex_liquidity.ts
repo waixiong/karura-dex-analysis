@@ -87,38 +87,8 @@ export async function querySwap(count: number, offset: number = 0) : Promise<Swa
         }`,
         "method": "POST",
     };
-    // var a = await fetch.default("https://api.polkawallet.io/karura-subql", {
-    //     "headers": {
-    //         "Content-Type": "application/json",
-    //     },
-    //     "body": `{
-    //         "query":"query {\
-    //             events (\
-    //                 first: ${count}\
-    //                 offset: ${offset}\
-    //                 orderBy: BLOCK_NUMBER_DESC\
-    //                 filter: {\
-    //                     method: { equalTo: \\\"Swap\\\" }\
-    //                 }\
-    //             ) {\
-    //                 nodes {\
-    //                     id\
-    //                     method\
-    //                     data\
-    //                     blockNumber\
-    //                     block {\
-    //                         id\
-    //                         timestamp\
-    //                     }\
-    //                 }\
-    //             }\
-    //         }",
-    //         "variables":null
-    //     }`,
-    //     "method": "POST",
-    // });
-    var a = await subquery(query);
-    var buf = await a.buffer();
+    var rawEvents = await subquery(query);
+    var buf = await rawEvents.buffer();
     var objs: Object[] = JSON.parse(buf.toString('utf8'))['data']['events']['nodes'];
 
     var swapEvents: SwapEvent[] = [];

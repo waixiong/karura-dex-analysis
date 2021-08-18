@@ -1,8 +1,8 @@
 import { ApiPromise } from '@polkadot/api';
 import { AnyNumber } from '@polkadot/types/types';
 import BN from 'bn.js';
-import * as fetch from "node-fetch";
-import { SwapEvent } from './swap';
+import { NATIVE } from './config';
+import { SwapEvent } from './model';
 import { subquery } from './utils';
 
 /// default as KAR KSM
@@ -33,23 +33,24 @@ export async function historyRateFromLiquidity(
     return _rate;
 }
 
-/// available only after block 276231
-export async function historyKSMPrice(blockNumber: AnyNumber, karuraApi: ApiPromise) : Promise<BN> {
+/// price of native relay chain
+/// available only after block 276231 for karura KSM
+export async function historyNativePrice(blockNumber: AnyNumber, karuraApi: ApiPromise) : Promise<BN> {
     const blockHash = await karuraApi.rpc.chain.getBlockHash(blockNumber);
-    const ksmValueTimestamp = await karuraApi.query.acalaOracle.values.at(blockHash, { Token: 'KSM' });
+    const nativeValueTimestamp = await karuraApi.query.acalaOracle.values.at(blockHash, { Token: NATIVE });
     /*{
         value: '297,940,000,000,000,000,000',
         timestamp: '1,629,213,594,519'
       }*/
     // // old method
-    // var json: { value: string, timestamp: string } = JSON.parse(JSON.stringify(ksmValueTimestamp.toHuman()));
+    // var json: { value: string, timestamp: string } = JSON.parse(JSON.stringify(nativeValueTimestamp.toHuman()));
     // var priceInBN = new BN(json.value.replace(RegExp(/,/g), ''));
     // console.log(json.value.replace(RegExp(/,/g), ''));
     // console.log(priceInBN.toString());
     // console.log(priceInBN.toString(16));
     
-    console.log(ksmValueTimestamp.toString());
-    var json: { value, timestamp } = JSON.parse(ksmValueTimestamp.toString());
+    console.log(nativeValueTimestamp.toString());
+    var json: { value, timestamp } = JSON.parse(nativeValueTimestamp.toString());
     var priceInBN = new BN(json.value.replace('0x', ''), 16);
     return priceInBN;
 }

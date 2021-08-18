@@ -56,3 +56,26 @@ export class SwapEvent {
         return result;
     }
 }
+
+export class PoolData {
+    pair: string; // in format of `{token0}-{token1}`
+    swapEvents: SwapEvent[];
+    volumeNative: number = 0;
+    volumeUSD: number = 0;
+
+    constructor(
+        pair: string,
+        swapEvents: SwapEvent[] = [],
+    ) {
+        this.pair = pair;
+        this.swapEvents = swapEvents;
+    }
+
+    get token0(): string {
+        return this.pair.split('-')[0];
+    }
+
+    get token1(): string {
+        return this.pair.split('-')[1];
+    }
+}

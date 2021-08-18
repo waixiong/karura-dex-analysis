@@ -10,20 +10,19 @@ The better analysis will be contained volume of inter-pair swapping (Ex the swap
 The data may have 1% ± mistake due to not exact history rate of pair, we define history rate from the liquidity at particular block number.
 
 ### Checklist
-- [x] get ratio from liquidity poll
-- [x] KSM price from oracle
+- [x] get ratio from liquidity pool
+- [x] KSM price from oracle on specific block
 - [x] today event query
 - [x] 24 hours event query
 - [x] 7 days event query
-- [x] rough simple volume (KSM) calculation
-- [ ] rough complex volume (KSM) calculation (involve more than two currency, by the time writing will be KAR->KSM->KUSD and KUSD->KSM->KAR)
+- [x] rough simple swap volume (KSM) calculation
+- [ ] rough complex swap volume (KSM) calculation (involve more than two currency, by the time writing will be KAR->KSM->KUSD and KUSD->KSM->KAR)
 - [ ] USD valued volume
-
-### Other Doc/Resource
-- [SubQuery](https://explorer.subquery.network/subquery/AcalaNetwork/karura)
-- [polkadot{.js}](https://polkadot.js.org/docs/api/start/)
-- [Subscan (Karura)](https://karura.subscan.io)
-- [Acala Foundation's Github](https://github.com/AcalaNetwork)
+- [x] Query liquidity on specific block
+- [ ] Calculate liquidity fee return on pool (% value, apr)
+- [ ] price of token (calculated from liquidity pool with KSM as base)
+- [ ] volume changed
+- [ ] liquidity data by token
 
 ### Current Status
 Currently trade data only calculated in KSM value, as mentioned above, complex swap is skipped.
@@ -61,5 +60,12 @@ npm run 24hours
 
 ### Future
 These are possible future of current repo:
+- evolve into graphql api or nestjs api with mongodb
 - expanded feature with web UI
 - replace by official repo with similar function
+
+### Other Doc/Resource
+- [SubQuery](https://explorer.subquery.network/subquery/AcalaNetwork/karura)
+- [polkadot{.js}](https://polkadot.js.org/docs/api/start/)
+- [Subscan (Karura)](https://karura.subscan.io)
+- [Acala Foundation's Github](https://github.com/AcalaNetwork)

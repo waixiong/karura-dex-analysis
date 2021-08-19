@@ -8,3 +8,4 @@ export * from './model';
 export * from './utils';
 export * from './dex_calculation';
 export * from './config';
+export * from './block';

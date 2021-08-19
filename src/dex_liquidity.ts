@@ -56,7 +56,11 @@ export async function historyNativePrice(blockNumber: AnyNumber, karuraApi: ApiP
 
 // TODO: use gentype from acala
 // this will be limited on 100 events, if u know the event u wan from block, can use querySwapFromBlock
-export async function querySwap(count: number, offset: number = 0, url = 'https://api.polkawallet.io/karura-subql') : Promise<SwapEvent[]> {
+export async function querySwap(
+    count: number, 
+    offset: number = 0, 
+    url = 'https://api.subquery.network/sq/AcalaNetwork/karura'
+) : Promise<SwapEvent[]> {
     var query = {
         "headers": {
             "Content-Type": "application/json",
@@ -99,7 +103,10 @@ export async function querySwap(count: number, offset: number = 0, url = 'https:
     return swapEvents;
 }
 
-export async function querySwapFromBlock(fromBlock: number) : Promise<SwapEvent[]> {
+export async function querySwapFromBlock(
+    fromBlock: number, 
+    url = 'https://api.subquery.network/sq/AcalaNetwork/karura',
+) : Promise<SwapEvent[]> {
     var query = {
         "headers": {
             "Content-Type": "application/json",
@@ -129,7 +136,7 @@ export async function querySwapFromBlock(fromBlock: number) : Promise<SwapEvent[
         }`,
         "method": "POST",
     };
-    var rawEvents = await subquery(query);
+    var rawEvents = await subquery(query, url);
     var buf = await rawEvents.buffer();
     var objs: Object[] = JSON.parse(buf.toString('utf8'))['data']['events']['nodes'];
 

@@ -1,14 +1,20 @@
-import { querySwap } from './dex_liquidity';
+import { querySwap, querySwapFromBlock } from './dex_liquidity';
 import { PoolData, SwapEvent } from './model';
 import { currencyAmountToNumber, endOfDay, initAPI, startOfDay } from './utils';
 import { liquidtyConfig, NATIVE } from './config';
+import { lastBlockFromSubquery } from './block';
+
+/// ASSUMPTION:
+/// 1 block is 12000 ms
+/// 1 day is 7200 blocks, may put 7300 for query excess data
 
 async function getSwapEventOnToday() : Promise<SwapEvent[]> {
     // Start of day, set at UTC 00:00:00.000
     var date: Date = startOfDay(new Date());
+    var fromBlockEstimate = (await lastBlockFromSubquery()) - 7300;
 
-    // first query
-    var swapEvents = await querySwap(100);
+    // first query, expected only need one query
+    var swapEvents = await querySwapFromBlock(fromBlockEstimate);
     
     // repeat query until reach swap of yesterday
     var reach24h: boolean = swapEvents[swapEvents.length-1].block.timestamp > date.getTime();
@@ -34,9 +40,10 @@ export async function getSwapEventOnLast24h() : Promise<SwapEvent[]> {
     // Start of day, set at UTC 00:00:00.000
     var date: Date = new Date();
     date.setHours(date.getHours() - 24);
+    var fromBlockEstimate = (await lastBlockFromSubquery()) - 7300;
 
-    // first query
-    var swapEvents = await querySwap(100);
+    // first query, expected only need one query
+    var swapEvents = await querySwapFromBlock(fromBlockEstimate);
     
     // repeat query until reach more than 24h
     var reach24h: boolean = swapEvents[swapEvents.length-1].block.timestamp > date.getTime();
@@ -66,15 +73,19 @@ export async function getSwapEventUntilDate(date?: Date) : Promise<SwapEvent[]> 
         date.setUTCDate(date.getUTCDate() - 6);
     }
 
-    // first query
-    var swapEvents = await querySwap(100);
+    // get block number from, with the milliseconds different, plus 100 as extra
+    var millisecondsDifferent = ((new Date()).getTime() - date.getTime());
+    var fromBlockEstimate = (await lastBlockFromSubquery()) - (millisecondsDifferent / 12000 + 100);
+
+    // first query, expected only need one query
+    var swapEvents = await querySwapFromBlock(fromBlockEstimate);
     
     // repeat query until reach more than date
-    var reach24h: boolean = swapEvents[swapEvents.length-1].block.timestamp > date.getTime();
-    while(reach24h) {
+    var reachDate: boolean = swapEvents[swapEvents.length-1].block.timestamp > date.getTime();
+    while(reachDate) {
         var swapEvents2 = await querySwap(100, swapEvents.length);
         swapEvents.push(...swapEvents2);
-        reach24h = swapEvents[swapEvents.length-1].block.timestamp > date.getTime();
+        reachDate = swapEvents[swapEvents.length-1].block.timestamp > date.getTime();
     }
 
     // Cut the list to only within date

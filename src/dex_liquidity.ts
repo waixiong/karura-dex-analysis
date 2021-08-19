@@ -49,15 +49,14 @@ export async function historyNativePrice(blockNumber: AnyNumber, karuraApi: ApiP
     // console.log(priceInBN.toString());
     // console.log(priceInBN.toString(16));
     
-    console.log(nativeValueTimestamp.toString());
     var json: { value, timestamp } = JSON.parse(nativeValueTimestamp.toString());
     var priceInBN = new BN(json.value.replace('0x', ''), 16);
     return priceInBN;
 }
 
 // TODO: use gentype from acala
-export async function querySwap(count: number, offset: number = 0) : Promise<SwapEvent[]> {
-    // var a = await fetch.default("https://api.subquery.network/sq/AcalaNetwork/karura", {
+// this will be limited on 100 events, if u know the event u wan from block, can use querySwapFromBlock
+export async function querySwap(count: number, offset: number = 0, url = 'https://api.polkawallet.io/karura-subql') : Promise<SwapEvent[]> {
     var query = {
         "headers": {
             "Content-Type": "application/json",
@@ -70,6 +69,48 @@ export async function querySwap(count: number, offset: number = 0) : Promise<Swa
                     orderBy: BLOCK_NUMBER_DESC\
                     filter: {\
                         method: { equalTo: \\\"Swap\\\" }\
+                    }\
+                ) {\
+                    nodes {\
+                        id\
+                        method\
+                        data\
+                        blockNumber\
+                        block {\
+                            id\
+                            timestamp\
+                        }\
+                    }\
+                }\
+            }",
+            "variables":null
+        }`,
+        "method": "POST",
+    };
+    var rawEvents = await subquery(query, url);
+    var buf = await rawEvents.buffer();
+    var objs: Object[] = JSON.parse(buf.toString('utf8'))['data']['events']['nodes'];
+
+    var swapEvents: SwapEvent[] = [];
+    for (var obj of objs) {
+        swapEvents.push(SwapEvent.fromJson(obj));
+    }
+    
+    return swapEvents;
+}
+
+export async function querySwapFromBlock(fromBlock: number) : Promise<SwapEvent[]> {
+    var query = {
+        "headers": {
+            "Content-Type": "application/json",
+        },
+        "body": `{
+            "query":"query {\
+                events (\
+                    orderBy: BLOCK_NUMBER_DESC\
+                    filter: {\
+                        method: { equalTo: \\\"Swap\\\" }\
+                        blockNumber: { greaterThan: \\\"${fromBlock}\\\" }\
                     }\
                 ) {\
                     nodes {\

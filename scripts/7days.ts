@@ -1,6 +1,7 @@
 import { 
     getSwapEventUntilDate, 
-    separateSwapEventByDay, 
+    separateSwapEventByDay,
+    transformRawSwapAction,
     categorizeSwapEventsToPool, 
     calculatePoolVolume,
     PoolData, 
@@ -23,9 +24,10 @@ async function main() {
         }`);
 
         // computing
-        var pools: Map<string, PoolData> = categorizeSwapEventsToPool(swapsOfDay);
+        var rawSwaps = transformRawSwapAction(swapsOfDay);
+        var pools: Map<string, PoolData> = categorizeSwapEventsToPool(rawSwaps);
         pools.forEach((pool, pair) => {
-            console.log(`\t${pool.swapEvents.length} trades in ${pair}`);
+            console.log(`\t${pool.rawSwaps.length} trades in ${pair}`);
             calculatePoolVolume(pool);
             console.log(`\t\tVolume(KSM): ${pool.volumeNative}`);
             console.log(`\t\tFees(KSM): ${pool.volumeNative * 0.003} KSM`);

@@ -1,5 +1,5 @@
 import { querySwap, querySwapFromBlock } from './dex_liquidity';
-import { PoolData, SwapEvent } from './model';
+import { PoolData, SwapEvent, RawSwapAction } from './model';
 import { currencyAmountToNumber, endOfDay, initAPI, startOfDay } from './utils';
 import { liquidtyConfig, NATIVE } from './config';
 import { lastBlockFromSubquery } from './block';
@@ -115,35 +115,61 @@ export function separateSwapEventByDay(swaps: SwapEvent[]) : SwapEvent[][] {
     return swapsWithDays;
 }
 
-export function categorizeSwapEventsToPool(swaps: SwapEvent[]): Map<string, PoolData> {
+export function handlingSwapEventInterswap(swaps: SwapEvent[], ) : void {
+    for (var swap of swaps) {
+        // TODO: handle interswap
+    }
+}
+
+// break complex swap event into raw swap action
+// must be called after handlingInterswap or else will skip complex swapping 
+export function transformRawSwapAction(swaps: SwapEvent[]) : RawSwapAction[] {
+    var rawSwaps: RawSwapAction[] = [];
+    for (var swap of swaps) {
+        if (swap.currency.length > 2 && swap.amount.length == 2) {
+            // skip inter-swap amount as handlingInterswap not called
+            // TODO: emit warning
+            continue;
+        }
+        for (var i = 0; i < swap.currency.length - 1; i++) {
+            var rawSwap: RawSwapAction = new RawSwapAction({
+                id: swap.id,
+                block: swap.block,
+                blockNumber: swap.blockNumber,
+                fromCurrency: swap.currency[i],
+                toCurrency: swap.currency[i+1],
+                fromAmount: swap.amount[i],
+                toAmount: swap.amount[i+1],
+            });
+            rawSwaps.push(rawSwap);
+        }
+    }
+
+    return rawSwaps;
+}
+
+export function categorizeSwapEventsToPool(swaps: RawSwapAction[]): Map<string, PoolData> {
     var poolMap: Map<string, PoolData> = new Map();
     for (var swap of swaps) {
-        for (var i = 0; i < swap.currency.length - 1; i++) {
-            var pair = liquidtyConfig[swap.currency[i]][swap.currency[i+1]];
-            if (!poolMap.has(pair)) {
-                poolMap.set(pair, new PoolData(pair));
-            }
-            poolMap.get(pair).swapEvents.push(swap);
+        var pair = liquidtyConfig[swap.fromCurrency][swap.toCurrency];
+        if (!poolMap.has(pair)) {
+            poolMap.set(pair, new PoolData(pair));
         }
+        poolMap.get(pair).rawSwaps.push(swap);
     }
     return poolMap;
 }
 
 export function calculatePoolVolume(pool: PoolData) {
-    for (var swap of pool.swapEvents) {
-        if (swap.currency.length > 2) {
-            // TODO: skip complex swapping first
-            continue;
-        }
+    for (var swap of pool.rawSwaps) {
         if (pool.token0 == NATIVE || pool.token1 == NATIVE) {
-            // TODO: dynamic
-            if (swap.currency[0] == NATIVE) {
+            if (swap.fromCurrency == NATIVE) {
                 // ROUGH-CALCULATION
-                var nativeTraded = currencyAmountToNumber(swap.startAmount);
+                var nativeTraded = currencyAmountToNumber(swap.fromAmount);
                 pool.volumeNative += nativeTraded;
             } else {
                 // ROUGH-CALCULATION
-                var nativeTraded = currencyAmountToNumber(swap.endAmount) / 0.997;
+                var nativeTraded = currencyAmountToNumber(swap.toAmount) / 0.997;
                 pool.volumeNative += nativeTraded;
             }
         } else {

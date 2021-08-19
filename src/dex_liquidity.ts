@@ -18,7 +18,7 @@ export async function historyRateFromLiquidity(
         { Token: token1 },
     ]);
     /*
-        for block 200000
+        for block 240000
         ["0x000000000000000005d4a5a29ff1d21b","0x0000000000000000002b508bdb92205f"]
         [ '420.1427 kKAR', '12.1919 kKAR' ]
     */

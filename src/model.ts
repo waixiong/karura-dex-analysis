@@ -30,6 +30,7 @@ export class SwapEvent {
     block: Block;
     // data
     currency: string[];
+    amount: BN[];
     startAmount: BN;
     endAmount: BN;
 
@@ -53,22 +54,23 @@ export class SwapEvent {
             result.startAmount = new BN(obj['data'][2]['value']);
             result.endAmount = new BN(obj['data'][3]['value']);
         }
+        result.amount = [ result.startAmount, result.endAmount ];
         return result;
     }
 }
 
 export class PoolData {
     pair: string; // in format of `{token0}-{token1}`
-    swapEvents: SwapEvent[];
+    rawSwaps: RawSwapAction[];
     volumeNative: number = 0;
     volumeUSD: number = 0;
 
     constructor(
         pair: string,
-        swapEvents: SwapEvent[] = [],
+        rawSwaps: RawSwapAction[] = [],
     ) {
         this.pair = pair;
-        this.swapEvents = swapEvents;
+        this.rawSwaps = rawSwaps;
     }
 
     get token0(): string {
@@ -77,5 +79,35 @@ export class PoolData {
 
     get token1(): string {
         return this.pair.split('-')[1];
+    }
+}
+
+// Raw data from SwapEvent with clear from which currency to which currency
+export class RawSwapAction {
+    id: string; // SwapEvent id
+    blockNumber: number; // SwapEvent blockNumber
+    block: Block; // SwapEvent Block
+    // data
+    fromCurrency: string;
+    fromAmount: BN;
+    toCurrency: string;
+    toAmount: BN;
+
+    constructor(raw: {
+        id: string,
+        blockNumber: number,
+        block: Block,
+        fromCurrency: string,
+        fromAmount: BN,
+        toCurrency: string,
+        toAmount: BN,
+    }) {
+        this.id = raw.id;
+        this.blockNumber = raw.blockNumber;
+        this.block = raw.block;
+        this.fromAmount = raw.fromAmount;
+        this.fromCurrency = raw.fromCurrency;
+        this.toAmount = raw.toAmount;
+        this.toCurrency = raw.toCurrency;
     }
 }

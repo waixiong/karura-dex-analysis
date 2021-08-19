@@ -29,8 +29,8 @@ The data may have 1% ± mistake due to not exact history rate of pair, we define
 Currently trade data only calculated in KSM value, as mentioned above, complex swap is skipped.
 
 There is two sample scripts:
-- `npm run 7days`: take around 40 seconds query 7 days events and compute data
-- `npm run 24hours`: take around 8 seconds query 24 hours events and compute data
+- `npm run 7days`: take around ~~40~~ 5 seconds query 7 days events and compute data
+- `npm run 24hours`: take around ~~8~~ 2 seconds query 24 hours events and compute data
 
 Here is the sample result
 ```

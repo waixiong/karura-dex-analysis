@@ -1,9 +1,20 @@
 import { ApiPromise } from '@polkadot/api';
 import { AnyNumber } from '@polkadot/types/types';
 import BN from 'bn.js';
-import { NATIVE } from './config';
+import { liquidtyConfig, NATIVE } from './config';
 import { SwapEvent } from './model';
 import { subquery } from './utils';
+
+const liquidityRateCache: Map<string, Map<AnyNumber, BN>> = new Map();
+
+async function queryAndCacheHistoryRateFromLiquidity(
+    blockNumber: AnyNumber, 
+    karuraApi: ApiPromise, 
+    token0: string = 'KAR',
+    token1: string = 'KSM'
+) {
+
+}
 
 /// default as KAR KSM
 export async function historyRateFromLiquidity(
@@ -12,10 +23,12 @@ export async function historyRateFromLiquidity(
     token0: string = 'KAR',
     token1: string = 'KSM'
 ) : Promise<BN> {
+    const pair: string = liquidtyConfig[token0][token1];
+    var tokens = pair.split('-');
     const blockHash = await karuraApi.rpc.chain.getBlockHash(blockNumber);
     const liquidityKAR = await karuraApi.query.dex.liquidityPool.at(blockHash, [
-        { Token: token0 },
-        { Token: token1 },
+        { Token: tokens[0] },
+        { Token: tokens[1] },
     ]);
     /*
         for block 240000
@@ -27,10 +40,13 @@ export async function historyRateFromLiquidity(
 
     // rate of token0 : token1
     // how many token0 equal to a token1
-    var _rate = token0Balance.mul(new BN(1000000000000)).div(token1Balance);
+    // var _rate = token0Balance.mul(new BN('1000000000000000000')).div(token1Balance);
     // var rate = _rate.toNumber() / 1000000000000
-
-    return _rate;
+    
+    if (token0 == tokens[0]) {
+        return token0Balance.mul(new BN('1000000000000000000')).div(token1Balance);
+    }
+    return token1Balance.mul(new BN('1000000000000000000')).div(token0Balance);
 }
 
 /// price of native relay chain

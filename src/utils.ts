@@ -5,7 +5,7 @@ import {
 import BN from 'bn.js';
 import * as fetch from "node-fetch";
 
-export function currencyAmountToNumber(bn: BN): number {
+export function quantityToNumber(bn: BN): number {
     return bn.toNumber() / 1000000000000;
 }
 

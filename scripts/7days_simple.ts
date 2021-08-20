@@ -14,12 +14,9 @@ import {
 async function main() {
     var time1 = new Date();
     console.log(`START`);
-    var api = await initAPI();
 
     var swaps = await getSwapEventUntilDate();
     console.log('DONE QUERY\n');
-
-    await handlingSwapEventInterswap(swaps, api);
     
     var swapsByDay = separateSwapEventByDay(swaps);
 
@@ -42,7 +39,6 @@ async function main() {
 
     var time2 = new Date();
     console.log(`\nTime taken: ${time2.getTime() - time1.getTime()} ms`);
-    api.disconnect();
 }
 
 main();

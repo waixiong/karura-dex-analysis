@@ -1,8 +1,11 @@
-import { querySwap, querySwapFromBlock } from './dex_liquidity';
+import { querySwap, querySwapFromBlock, historyRateFromLiquidity } from './dex_liquidity';
 import { PoolData, SwapEvent, RawSwapAction } from './model';
-import { currencyAmountToNumber, endOfDay, initAPI, startOfDay } from './utils';
+import { quantityToNumber, endOfDay, startOfDay } from './utils';
 import { liquidtyConfig, NATIVE } from './config';
 import { lastBlockFromSubquery } from './block';
+import { ApiPromise } from '@polkadot/api';
+import BN from 'bn.js';
+import * as fs from 'fs';
 
 /// ASSUMPTION:
 /// 1 block is 12000 ms
@@ -115,10 +118,39 @@ export function separateSwapEventByDay(swaps: SwapEvent[]) : SwapEvent[][] {
     return swapsWithDays;
 }
 
-export function handlingSwapEventInterswap(swaps: SwapEvent[], ) : void {
+export async function handlingSwapEventInterswap(swaps: SwapEvent[], api: ApiPromise) : Promise<void> {
+    var logs: string[] = [];
+    var promises: Promise<void>[] = [];
     for (var swap of swaps) {
-        // TODO: handle interswap
+        // handle interswap
+        if (swap.currency.length == swap.amount.length) {
+            continue;
+        }
+        // ROUGH-CALCULATION
+        for (var i = 0; i < swap.currency.length - 2; i++) {
+            var fromSymbol = swap.currency[i];
+            var toSymbol = swap.currency[i+1];
+            // rate of fromSymbol to 1 toSymbol
+            // TODO: inprove calculation
+            var rate = await historyRateFromLiquidity(swap.blockNumber-1, api, fromSymbol, toSymbol);
+            // amount * 0.997 / rate
+            var amount = swap.amount[i].mul(new BN('997000000000000000')).div(rate);
+            swap.amount.splice(i+1, 0, amount);
+        }
+        // prepare logs
+        logs.push(JSON.stringify(swap, null, "\t"));
     }
+    // write logs for future analysis and improvement
+    var logsString = '[';
+    for (var log of logs) {
+        logsString += '\n' + log + ',';
+    }
+    logsString = logsString.slice(0, logsString.length - 1) + '\n]';
+    const data = new Uint8Array(Buffer.from(logsString));
+    fs.writeFile(`logs/${new Date()}`, data, (err) => {
+        if (err) console.log(`Issue on writing file: ${err}`);
+        else console.log('The file has been saved!');
+    });
 }
 
 // break complex swap event into raw swap action
@@ -164,12 +196,10 @@ export function calculatePoolVolume(pool: PoolData) {
     for (var swap of pool.rawSwaps) {
         if (pool.token0 == NATIVE || pool.token1 == NATIVE) {
             if (swap.fromCurrency == NATIVE) {
-                // ROUGH-CALCULATION
-                var nativeTraded = currencyAmountToNumber(swap.fromAmount);
+                var nativeTraded = quantityToNumber(swap.fromAmount);
                 pool.volumeNative += nativeTraded;
             } else {
-                // ROUGH-CALCULATION
-                var nativeTraded = currencyAmountToNumber(swap.toAmount) / 0.997;
+                var nativeTraded = quantityToNumber(swap.toAmount) / 0.997;
                 pool.volumeNative += nativeTraded;
             }
         } else {

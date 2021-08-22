@@ -18,7 +18,8 @@ async function main() {
     var swaps = await getSwapEventOnLast24h();
     console.log(`${swaps.length} trade made on last 24 hours`);
 
-    var rawSwaps = transformRawSwapAction(swaps);
+    var [rawSwaps, skip] = transformRawSwapAction(swaps);
+    console.log(`\nskip ${skip} interswap\n`);
     var pools: Map<string, PoolData> = categorizeSwapEventsToPool(rawSwaps);
     pools.forEach((pool, pair) => {
         console.log(`\t${pool.rawSwaps.length} trades in ${pair}`);

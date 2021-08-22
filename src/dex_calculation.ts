@@ -154,13 +154,15 @@ export async function handlingSwapEventInterswap(swaps: SwapEvent[], api: ApiPro
 }
 
 // break complex swap event into raw swap action
-// must be called after handlingInterswap or else will skip complex swapping 
-export function transformRawSwapAction(swaps: SwapEvent[]) : RawSwapAction[] {
+// must be called after handlingInterswap or else will skip complex swapping
+export function transformRawSwapAction(swaps: SwapEvent[]) : [ RawSwapAction[], number ] {
     var rawSwaps: RawSwapAction[] = [];
+    var skip: number = 0;
     for (var swap of swaps) {
         if (swap.currency.length > 2 && swap.amount.length == 2) {
             // skip inter-swap amount as handlingInterswap not called
             // TODO: emit warning
+            skip++;
             continue;
         }
         for (var i = 0; i < swap.currency.length - 1; i++) {
@@ -177,7 +179,7 @@ export function transformRawSwapAction(swaps: SwapEvent[]) : RawSwapAction[] {
         }
     }
 
-    return rawSwaps;
+    return [rawSwaps, skip];
 }
 
 export function categorizeSwapEventsToPool(swaps: RawSwapAction[]): Map<string, PoolData> {

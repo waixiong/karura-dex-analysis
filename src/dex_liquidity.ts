@@ -2,7 +2,7 @@ import { ApiPromise } from '@polkadot/api';
 import { AnyNumber } from '@polkadot/types/types';
 import BN from 'bn.js';
 import { liquidtyConfig, NATIVE } from './config';
-import { SwapEvent } from './model';
+import { SwapEvent, RawEvent } from './model';
 import { subquery } from './utils';
 
 const liquidityRateCache: Map<string, Map<AnyNumber, BN>> = new Map();
@@ -109,7 +109,9 @@ export async function querySwap(
     };
     var rawEvents = await subquery(query, url);
     var buf = await rawEvents.buffer();
-    var objs: Object[] = JSON.parse(buf.toString('utf8'))['data']['events']['nodes'];
+    console.log(buf.toString('utf8'));
+    var objs: RawEvent[] = JSON.parse(buf.toString('utf8'))['data']['events']['nodes'];
+    console.log(objs[0].data.length);
 
     var swapEvents: SwapEvent[] = [];
     for (var obj of objs) {
@@ -154,7 +156,7 @@ export async function querySwapFromBlock(
     };
     var rawEvents = await subquery(query, url);
     var buf = await rawEvents.buffer();
-    var objs: Object[] = JSON.parse(buf.toString('utf8'))['data']['events']['nodes'];
+    var objs: RawEvent[] = JSON.parse(buf.toString('utf8'))['data']['events']['nodes'];
 
     var swapEvents: SwapEvent[] = [];
     for (var obj of objs) {

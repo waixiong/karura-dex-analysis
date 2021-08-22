@@ -30,7 +30,7 @@ async function main() {
 
         // computing
         var [rawSwaps, skip] = transformRawSwapAction(swapsOfDay);
-        console.log(`\nskip ${skip} interswap\n`);
+        // console.log(`\nskip ${skip} interswap\n`);
         var pools: Map<string, PoolData> = categorizeSwapEventsToPool(rawSwaps);
         pools.forEach((pool, pair) => {
             console.log(`\t${pool.rawSwaps.length} trades in ${pair}`);

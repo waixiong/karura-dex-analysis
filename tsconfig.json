@@ -1,7 +1,14 @@
 {
     "compilerOptions": {
+      "module": "commonjs",
       "esModuleInterop": true,
-      "target": "es5",
-      "declaration": true
+      "target": "es2017",
+      "outDir": "./dist",
+      "declaration": true,
+      "emitDecoratorMetadata": true,
+      "experimentalDecorators": true,
+      "allowSyntheticDefaultImports": true,
+      "sourceMap": true,
+      "incremental": true
     }
 }

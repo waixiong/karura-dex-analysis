@@ -1,8 +1,8 @@
 # Karura Dex Analysis
 
-Simple CLI daily volume analysis through query history state from karura node and event from karura subql.
+NestJS API for daily volume analysis through query history state from karura node and event from karura subql.
 
-Will start convert to api with database for long term used.
+Will be using database (probably mongo) as storage for improving performance.
 
 ### Expectation from here
 The minimum expected analysis is getting volume in term of native of relay chain (KSM) between two currency.
@@ -26,6 +26,8 @@ The data may have 1% ± mistake due to not exact history rate of pair, we define
 - [ ] price of token (calculated from liquidity pool with KSM as base)
 - [ ] volume changed
 - [ ] liquidity data by token
+- [ ] save history rate on database
+- [ ] save raw swap rate on database (from old swap event structure)
 
 ### BigInt Format
 - `quantity` = 12 decimal

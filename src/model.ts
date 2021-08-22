@@ -44,27 +44,9 @@ export class SwapEvent {
 
     public static fromJson(obj: RawEvent) {
         let result: SwapEvent = new SwapEvent();
-        // if (obj.hasOwnProperty('id')) {
-        //     result.id = obj['id'];
-        // }
         result.id = obj.id;
-        // if (obj.hasOwnProperty('blockNumber')) {
-        //     result.blockNumber = obj['blockNumber'];
-        // }
         result.blockNumber = obj.blockNumber;
-        // if (obj.hasOwnProperty('block')) {
-        //     result.block = Block.fromJson(obj['block'] as { id: string, timestamp: string });
-        // }
         result.block = Block.fromJson(obj.block as { id: string, timestamp: string });
-        // if (obj.hasOwnProperty('data')) {
-        //     var swappingToken: any[] = JSON.parse(obj['data'][1]['value']);
-        //     result.currency = [];
-        //     for (var c of swappingToken) {
-        //         result.currency.push(c['token']);
-        //     }
-        //     result.startAmount = new BN(obj['data'][2]['value']);
-        //     result.endAmount = new BN(obj['data'][3]['value']);
-        // }
         if (obj.data.length == 4) {
             // old structure: Swap(T::AccountId, Vec<CurrencyId>, Balance, Balance)
             var swappingToken: any[] = JSON.parse(obj['data'][1]['value']);

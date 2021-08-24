@@ -73,26 +73,29 @@ npm run 7days-complex
 npm run 24hours
 ```
 ```
-987 trade made on last 24 hours
-	468 trades in KAR-KSM
-		Volume(KSM): 1915.0428095474263
-		Fees(KSM): 5.745128428642279 KSM
-	266 trades in KUSD-KSM
-		Volume(KSM): 2714.0571112592165
-		Fees(KSM): 8.14217133377765 KSM
+596 trade made on last 24 hours
+
+skip 147 interswap
+
+	179 trades in KUSD-KSM
+		Volume(KSM): 1079.031499048456
+		Fees(KSM): 3.237094497145368 KSM
+	270 trades in KAR-KSM
+		Volume(KSM): 1626.92652079092
+		Fees(KSM): 4.88077956237276 KSM
 ```
 
 ```
 npm run 24hours-complex
 ```
 ```
-979 trade made on last 24 hours
-	516 trades in KUSD-KSM
-		Volume(KSM): 3489.4786854985323
-		Fees(KSM): 10.468436056495596 KSM
-	714 trades in KAR-KSM
-		Volume(KSM): 2635.492926055426
-		Fees(KSM): 7.906478778166278 KSM
+596 trade made on last 24 hours
+	326 trades in KUSD-KSM
+		Volume(KSM): 1185.994747433518
+		Fees(KSM): 3.5579842423005537 KSM
+	417 trades in KAR-KSM
+		Volume(KSM): 1733.9008683792765
+		Fees(KSM): 5.20170260513783 KSM
 ```
 
 ### Future

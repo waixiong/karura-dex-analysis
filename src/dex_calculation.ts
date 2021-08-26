@@ -134,7 +134,7 @@ export async function handlingSwapEventInterswap(swaps: SwapEvent[], api: ApiPro
             // TODO: inprove calculation
             var rate = await historyRateFromLiquidity(swap.blockNumber-1, api, fromSymbol, toSymbol);
             // amount * 0.997 / rate
-            var amount = swap.amount[i].mul(new BN('997000000000000000')).div(rate);
+            var amount = swap.amount[i] * BigInt('997000000000000000') / rate;
             swap.amount.splice(i+1, 0, amount);
         }
         // prepare logs
@@ -198,10 +198,10 @@ export function calculatePoolVolume(pool: PoolData) {
     for (var swap of pool.rawSwaps) {
         if (pool.token0 == NATIVE || pool.token1 == NATIVE) {
             if (swap.fromCurrency == NATIVE) {
-                var nativeTraded = quantityToNumber(swap.fromAmount);
+                var nativeTraded = Number(swap.fromAmount) / 1000000000000;
                 pool.volumeNative += nativeTraded;
             } else {
-                var nativeTraded = quantityToNumber(swap.toAmount) / 0.997;
+                var nativeTraded = (Number(swap.toAmount) / 1000000000000) / 0.997;
                 pool.volumeNative += nativeTraded;
             }
         } else {

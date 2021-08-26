@@ -27,6 +27,7 @@ export async function initAPI() : Promise<ApiPromise> {
     // const wsProvider = new WsProvider('wss://kusama-rpc.polkadot.io/');
     // const api = await ApiPromise.create({ provider: wsProvider });
     
+    // TODO: set url in env
     const wsProvider = new WsProvider('wss://karura.api.onfinality.io/public-ws');
     const api = await ApiPromise.create(options({
         provider: wsProvider,

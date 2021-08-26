@@ -22,7 +22,7 @@ export async function historyRateFromLiquidity(
     karuraApi: ApiPromise, 
     token0: string = 'KAR',
     token1: string = 'KSM'
-) : Promise<BN> {
+) : Promise<bigint> {
     const pair: string = liquidtyConfig[token0][token1];
     var tokens = pair.split('-');
     const blockHash = await karuraApi.rpc.chain.getBlockHash(blockNumber);
@@ -35,8 +35,8 @@ export async function historyRateFromLiquidity(
         ["0x000000000000000005d4a5a29ff1d21b","0x0000000000000000002b508bdb92205f"]
         [ '420.1427 kKAR', '12.1919 kKAR' ]
     */
-    var token0Balance = new BN(liquidityKAR[0].toString());
-    var token1Balance = new BN(liquidityKAR[1].toString());
+    var token0Balance = BigInt(liquidityKAR[0].toString());
+    var token1Balance = BigInt(liquidityKAR[1].toString());
 
     // rate of token0 : token1
     // how many token0 equal to a token1
@@ -44,9 +44,9 @@ export async function historyRateFromLiquidity(
     // var rate = _rate.toNumber() / 1000000000000
     
     if (token0 == tokens[0]) {
-        return token0Balance.mul(new BN('1000000000000000000')).div(token1Balance);
+        return token0Balance * BigInt('1000000000000000000') / (token1Balance);
     }
-    return token1Balance.mul(new BN('1000000000000000000')).div(token0Balance);
+    return token1Balance * BigInt('1000000000000000000') / (token0Balance);
 }
 
 /// price of native relay chain

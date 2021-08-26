@@ -1,5 +1,5 @@
 import {  } from '@polkadot/typegen';
-import BN from 'bn.js';
+// import BN from 'bn.js';
 
 export interface RawEvent { 
     id: string; 
@@ -38,9 +38,9 @@ export class SwapEvent {
     block: Block;
     // data
     currency: string[];
-    amount: BN[];
-    startAmount: BN;
-    endAmount: BN;
+    amount: bigint[];
+    startAmount: bigint;
+    endAmount: bigint;
 
     public static fromJson(obj: RawEvent) {
         let result: SwapEvent = new SwapEvent();
@@ -49,18 +49,18 @@ export class SwapEvent {
         result.block = Block.fromJson(obj.block as { id: string, timestamp: string });
         if (obj.data.length == 4) {
             // old structure: Swap(T::AccountId, Vec<CurrencyId>, Balance, Balance)
-            var swappingToken: any[] = JSON.parse(obj['data'][1]['value']);
+            var swappingToken: string[] = JSON.parse(obj['data'][1]['value']);
             result.currency = [];
             for (var c of swappingToken) {
                 result.currency.push(c['token']);
             }
-            result.startAmount = new BN(obj['data'][2]['value']);
-            result.endAmount = new BN(obj['data'][3]['value']);
+            result.startAmount = BigInt(obj['data'][2]['value']);
+            result.endAmount = BigInt(obj['data'][3]['value']);
             result.amount = [ result.startAmount, result.endAmount ];
         } else {
             // new structure: Swap(T::AccountId, Vec<CurrencyId>, Vec<Balance>)
             // from commit 5afdb835eede2e0f417dff561167c26e81ddb571 @ AcalaNetwork/Acala 
-            var swappingToken: any[] = JSON.parse(obj['data'][1]['value']);
+            var swappingToken: string[] = JSON.parse(obj['data'][1]['value']);
             result.currency = [];
             for (var c of swappingToken) {
                 result.currency.push(c['token']);
@@ -108,18 +108,18 @@ export class RawSwapAction {
     block: Block; // SwapEvent Block
     // data
     fromCurrency: string;
-    fromAmount: BN;
+    fromAmount: bigint;
     toCurrency: string;
-    toAmount: BN;
+    toAmount: bigint;
 
     constructor(raw: {
         id: string,
         blockNumber: number,
         block: Block,
         fromCurrency: string,
-        fromAmount: BN,
+        fromAmount: bigint,
         toCurrency: string,
-        toAmount: BN,
+        toAmount: bigint,
     }) {
         this.id = raw.id;
         this.blockNumber = raw.blockNumber;

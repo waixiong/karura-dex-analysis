@@ -18,7 +18,8 @@ The data may have 1% ± mistake due to not exact history rate of pair, we define
 - [x] 24 hours event query
 - [x] 7 days event query
 - [x] simple swap volume (KSM) calculation
-- [x] rough complex swap (interswap) volume (KSM) calculation (involve more than two currency, by the time writing will be KAR->KSM->KUSD and KUSD->KSM->KAR)
+- [x] efficient complex swap (interswap) volume (KSM) calculation (involve more than two currency, by the time writing will be KAR->KSM->KUSD and KUSD->KSM->KAR for block before 408594)
+	- since block 408594, the swap event change from `Swap(T::AccountId, Vec<CurrencyId>, Balance, Balance)` to `Swap(T::AccountId, Vec<CurrencyId>, Vec<Balance>)` make interswap can be calculated without complex step
 - [ ] USD valued volume
 - [x] Query liquidity on specific block
 - [x] History rate base on liquidity pool

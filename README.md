@@ -1,3 +1,11 @@
+### *Notice*
+
+Please go to [karura_info_web](https://github.com/waixiong/karura_info_web).
+
+[karura_info_web](https://github.com/waixiong/karura_info_web) is a client info that work directly with subql without any extra api.
+
+This repo might be abandoned.
+
 # Karura Dex Analysis
 
 Simple CLI daily volume analysis through query history state from karura node and event from karura subql.
